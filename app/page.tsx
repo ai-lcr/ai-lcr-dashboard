@@ -499,6 +499,8 @@ function FleetTable({ fleet, timeline, win, provider }: { fleet: FleetRow[]; tim
             <th className="r">spent</th>
             <th className="r">saved</th>
             <th className="r">save%</th>
+            <th className="r">cache</th>
+            <th className="r">cache saved</th>
             <th className="r">failover</th>
             <th className="r">leaked</th>
             <th className="hcol">health</th>
@@ -522,6 +524,8 @@ function FleetTable({ fleet, timeline, win, provider }: { fleet: FleetRow[]; tim
                 <td className="r">
                   <span className={`tag t-${saveTone(f.savePct)}`}>{pct(f.savePct)}</span>
                 </td>
+                <td className="r">{f.cacheHitRate > 0 ? <span className="cachev">{pct(f.cacheHitRate)}</span> : <span className="muted">—</span>}</td>
+                <td className="r">{f.cachedSavingUsd > 0 ? <span className="cachev">{money(f.cachedSavingUsd)}</span> : <span className="muted">—</span>}</td>
                 <td className={`r${f.failoverRate > 0.03 ? " warn" : ""}`}>{pct(f.failoverRate)}</td>
                 <td className={`r${f.failures > 0 ? " bad" : ""}`}>{f.failures}</td>
                 <td className="hcol">

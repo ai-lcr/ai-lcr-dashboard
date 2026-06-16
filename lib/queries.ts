@@ -279,6 +279,8 @@ export interface FleetRow {
   failoverRate: number;
   failures: number; // leaked count (every provider failed)
   failRate: number;
+  cacheHitRate: number;
+  cachedSavingUsd: number;
   topProvider: string;
   topProviderPct: number;
 }
@@ -293,7 +295,10 @@ export async function getFleet(win: WindowKey, provider?: string): Promise<Fleet
             count(*) FILTER (WHERE NOT ok)::int      AS failures,
             coalesce(sum(cost_usd), 0)::float8       AS cost_usd,
             coalesce(sum(baseline_usd) FILTER (WHERE baseline_usd > 0), 0)::float8 AS baseline_usd,
-            coalesce(sum(greatest(baseline_usd - cost_usd, 0)) FILTER (WHERE baseline_usd > 0), 0)::float8 AS saved_usd
+            coalesce(sum(greatest(baseline_usd - cost_usd, 0)) FILTER (WHERE baseline_usd > 0), 0)::float8 AS saved_usd,
+            coalesce(sum(cached_saving_usd), 0)::float8     AS cached_saving,
+            coalesce(sum(cached_input_tokens), 0)::bigint   AS cached_input,
+            coalesce(sum(input_tokens), 0)::bigint          AS input_toks
        FROM lcr_calls
       WHERE ${since(win)}${clause}
       GROUP BY project`,
@@ -326,6 +331,8 @@ export async function getFleet(win: WindowKey, provider?: string): Promise<Fleet
         failoverRate: r.calls > 0 ? r.failovers / r.calls : 0,
         failures: r.failures,
         failRate: r.calls > 0 ? r.failures / r.calls : 0,
+        cacheHitRate: r.input_toks > 0 ? Number(r.cached_input ?? 0) / Number(r.input_toks) : 0,
+        cachedSavingUsd: r.cached_saving ?? 0,
         topProvider: t?.provider ?? "—",
         topProviderPct: t && r.calls > 0 ? t.calls / r.calls : 0,
       };
