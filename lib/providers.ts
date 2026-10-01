@@ -4,7 +4,7 @@
 //
 // Domain resolution, in order:
 //   1. built-in map for the providers ai-lcr ships adapters for
-//   2. an optional env map LCR_PROVIDER_DOMAINS = {"tokenmart":"tokenmart.ai",…}
+//   2. an optional env map LCR_PROVIDER_DOMAINS = {"other-provider":"example.com",…}
 //   3. the provider string is already a domain (contains a dot) → use as-is
 //   4. otherwise undefined → monogram only
 import { monogram } from "./projects";
@@ -15,7 +15,7 @@ const BUILTIN: Record<string, string> = {
   openrouter: "openrouter.ai",
   deepinfra: "deepinfra.com",
   deepseek: "deepseek.com",
-  tokenmart: "tokenmart.ai",
+  tokenify: "tokenify.dev",
   runware: "runware.ai",
   fal: "fal.ai",
   anthropic: "anthropic.com",
